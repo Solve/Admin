@@ -17,6 +17,18 @@ use Solve\Utils\FSService;
 
 class Installer {
 
+    public static function onPostUpdateCmd() {
+        echo __METHOD__;
+    }
+
+    public static function onPostInstallCmd() {
+        echo __METHOD__;
+    }
+
+    public static function onPostPackageUpdate() {
+        echo __METHOD__;
+    }
+
     public static function onPostPackageInstall(CommandEvent $event) {
         $io = $event->getIO();
         if (!$io->askConfirmation('Would you like to install admin panel? (Y/n) ', true)) {

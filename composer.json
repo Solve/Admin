@@ -20,9 +20,18 @@
     },
     "scripts": {
         "post-package-install" : [
-            "SolveProject\\ProjectInstaller::onPostRootPackageInstall",
             "Solve\\AdminPackage\\Installer::onPostPackageInstall"
+        ],
+        "post-package-update" : [
+            "Solve\\AdminPackage\\Installer::onPostPackageUpdate"
+        ],
+        "post-install-cmd" : [
+            "Solve\\AdminPackage\\Installer::onPostInstallCmd"
+        ],
+        "post-update-cmd" : [
+            "Solve\\AdminPackage\\Installer::onPostUpdateCmd"
         ]
+
     },
     "extra": {
         "app-name" : "admin"

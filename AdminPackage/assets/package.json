@@ -1,0 +1,12 @@
+{
+  "name": "SolveAdmin",
+  "version": "0.0.1",
+  "description": "Solve admin package",
+  "dependencies": {
+    "angular": "*",
+    "angular-bootstrap": "*",
+    "angular-local-storage": "*",
+    "angular-ui-router": "*",
+    "ng-table": "*"
+  }
+}

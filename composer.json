@@ -19,7 +19,7 @@
         "psr-4": { "Solve\\": "" }
     },
     "scripts": {
-        "post-install-cmd" : [
+        "post-package-install" : [
             "SolveProject\\ProjectInstaller::onPostRootPackageInstall",
             "Solve\\AdminPackage\\Installer::onPostPackageInstall"
         ]

@@ -46,9 +46,7 @@ class Installer {
         FSService::makeWritable($projectRoot . 'web/admin/');
         FSService::copyRecursive($packageRoot . 'app/', $appRoot);
         FSService::copyRecursive($packageRoot . 'assets/', $projectRoot . 'web/admin/');
-        exec('cd '.$projectRoot.'web/admin/');
-        exec('npm install');
-        exec('cd '.$projectRoot);
+        exec('cd '.$projectRoot.'web/admin && npm install');
     }
 
 }

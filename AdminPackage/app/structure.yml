@@ -1,0 +1,16 @@
+users:
+  type: TableView
+  model: User
+  columns:
+    id:
+      title: "#"
+      type: text
+    name:
+      title: Name
+      type: text
+    status:
+      title: Status
+      type: label
+    progress:
+      title: Progress
+      type: progressbar

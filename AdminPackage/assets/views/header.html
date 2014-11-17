@@ -25,7 +25,10 @@
             <li class="search-box visible-md visible-lg">
                 <div class="input-group">
                     <span class="input-group-addon"><i class="ti-search"></i></span>
-                    <input type="text" class="form-control" placeholder="Search...">
+                    <input type="text" class="form-control" placeholder="Search..."
+                           data-ng-model="searchKeywords"
+                           data-ng-keyup="doSearch($event)"
+                            />
                 </div>
             </li>
         </ul>

@@ -1,4 +1,4 @@
-var cmsApp = angular.module('cmsApp', ['LocalStorageModule', 'ui.router', 'ui.bootstrap', 'ngTable'])
+var cmsApp = angular.module('cmsApp', ['LocalStorageModule', 'ui.router', 'ui.bootstrap', 'ngTable', 'ngAnimate'])
     .config(function ($httpProvider, localStorageServiceProvider, $stateProvider, $urlRouterProvider) {
 
         $httpProvider.interceptors.push("APIInterceptor");
@@ -14,16 +14,34 @@ var cmsApp = angular.module('cmsApp', ['LocalStorageModule', 'ui.router', 'ui.bo
             templateUrl: "admin/views/dashboard.html",
             controller: "DashboardController"
         }).state("users", {
+            template: '<ui-view/>'
+        }).state("users.list", {
             url: "/users",
-            templateUrl: "admin/views/users.html",
+            templateUrl: "admin/views/list/table.html",
             controller: "UsersController"
+        }).state("users.edit", {
+            url: "/users/:id/",
+            templateUrl: "admin/views/list/form.html",
+            controller: "ObjectsInfoController"
+        }).state("users.add", {
+            url: "/users/add",
+            templateUrl: "admin/views/list/form.html",
+            controller: "ObjectsInfoController"
         });
-        $urlRouterProvider.otherwise("/dashboard");
+        $urlRouterProvider.otherwise(function($injector, $location) {
+            console.log('otherwise', $injector.get('ApiService').isLoggedIn());
+            if ($injector.get('ApiService').isLoggedIn()) {
+                $location.path('/dashboard');
+            } else {
+                $location.path('/login');
+            }
+        });
     })
     .run(function ($state, $rootScope, ApiService) {
 
-        $rootScope.$on("$routeChangeStart", function (event, next, current) {
-            if (!ApiService.isLoggedIn()) {
+        $rootScope.$on("$stateChangeStart", function (event, toState, toParams, fromState, fromParams) {
+            if (!ApiService.isLoggedIn() && toState.name !== "login") {
+                event.preventDefault();
                 $state.go("login");
             }
         });

@@ -8717,7 +8717,6 @@ input.input-danger, input.input-danger:focus {
         transform: translateY(-20px)
     }
 }
-
 .animate-fade-up.ng-enter {
     -webkit-animation: .35s fade-up-enter;
     -moz-animation: .35s fade-up-enter;

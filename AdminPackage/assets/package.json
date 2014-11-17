@@ -1,7 +1,7 @@
 {
   "name": "SolveAdmin",
   "version": "0.0.1",
-  "description": "Solve admin package",
+  "description": "",
   "dependencies": {
     "angular": "*",
     "angular-bootstrap": "*",

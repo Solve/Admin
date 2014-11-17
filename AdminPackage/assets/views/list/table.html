@@ -1,0 +1,80 @@
+<div class="page page-table">
+
+    <div class="panel table-dynamic">
+        <div class="panel-heading" style="margin-bottom: 20px;">
+            <span style="text-transform: none;font-weight: 100;">
+                <span style="font-size: 32px;">Users</span> ({{ tableParams.currentResultsCount }} of {{ tableParams.total() }} total)
+            </span>
+
+            <button style="margin-top:5px;" ng-click="addNew()" class="btn btn-w-md btn-gap-v btn-round btn-default pull-right"><i class="glyphicon glyphicon-plus"></i>&nbsp;New </button>
+        </div>
+
+        <div class="row" ng-hide="true">
+            <div class="col-sm-4 col-xs-6">
+                <input type="text"
+                       placeholder="Search..."
+                       class="form-control"
+                       data-ng-model="searchKeywords"
+                       data-ng-keyup="doSearch($event)"
+                        style="border: 0;"
+                        >
+            </div>
+        </div>
+        <table class="table table-hover" ng-table="tableParams" template-pagination="custom/pager">
+            <tr style="background: rgb(245,245,245);">
+                <th ng-repeat="(columnName, columnInfo) in moduleConfig.columns"
+                    ng-click="sortTableBy(columnName)"
+                    style="cursor: pointer;"
+                        >
+                <span>{{ columnInfo.title }}&nbsp;</span><i ng-class="{
+                'ti-angle-down': tableParams.isSortBy(columnName, 'desc'),
+                'ti-angle-up': tableParams.isSortBy(columnName, 'asc')
+                }"></i></th>
+            </tr>
+            <tr ng-repeat="object in $data">
+                <td ng-repeat="(columnName, columnInfo) in moduleConfig.columns">
+                    <progressbar ng-if="columnInfo.type == 'progressbar'" class="progressbar-xs no-margin" value="object[columnName]"></progressbar>
+                    <span ng-if="columnInfo.type == 'label'" class="label label-info">{{ object[columnName] }}</span>
+                    <span ng-if="columnInfo.type == 'text'">{{ object[columnName] }}</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+</div>
+<script type="text/ng-template" id="custom/pager">
+    <footer class="table-footer">
+        <div class="row">
+            <div class="col-md-6 page-num-info">
+                    <span>
+                        Show
+                        <span class="btn-group">
+                            <button type="button" ng-class="{'active':params.count() == 10}" ng-click="params.count(10)" class="btn btn-default btn-round">10</button>
+                            <button type="button" ng-class="{'active':params.count() == 25}" ng-click="params.count(25)" class="btn btn-default btn-round">25</button>
+                            <button type="button" ng-class="{'active':params.count() == 50}" ng-click="params.count(50)" class="btn btn-default btn-round">50</button>
+                        </span>
+                        <select ng-hide="true"
+                                ng-model="params.currentCount"
+                                ng-options="num for num in params.pagesCountOptions"
+                                ng-change="params.count(params.currentCount)"
+                                >
+                        </select>
+                        entries per page
+                    </span>
+
+                </li>
+            </div>
+            <div class="col-md-6 text-right pagination-container">
+                <pagination class="pagination-sm"
+                            ng-model="params.currentPage"
+                            total-items="params.total()"
+                            max-size="6"
+                            ng-change="params.page(params.currentPage)"
+                            items-per-page="params.currentCount"
+                            rotate="false"
+                            previous-text="&lsaquo;" next-text="&rsaquo;"
+                            boundary-links="true"></pagination>
+            </div>
+        </div>
+    </footer>
+</script>

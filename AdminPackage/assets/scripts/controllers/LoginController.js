@@ -1,10 +1,10 @@
 cmsApp.controller('LoginController', function($scope, $rootScope, $state, ApiService) {
+    if (ApiService.isLoggedIn()) $state.go('dashboard');
 
     $scope.data = {
         email: '',
         password: ''
     };
-    $rootScope.isFullScreen = true;
 
     $scope.isEmpty = function() {
         return !($scope.data.email && $scope.data.password);
@@ -13,7 +13,7 @@ cmsApp.controller('LoginController', function($scope, $rootScope, $state, ApiSer
     $scope.doSignIn = function() {
         ApiService.login($scope.data, function(r) {
             if (r.status == 200) {
-                $rootScope.isFullScreen = false;
+                $scope.$emit('USER_LOGGED_IN');
                 $state.go('dashboard');
             } else {
                 $scope.data = {};

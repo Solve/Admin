@@ -36,7 +36,7 @@ class Installer {
 
         $config = DC::getProjectConfig();
         while ($name && $config->get('applications/' . $name)) {
-            $name = $io->ask('Application exists, specify other name: ');
+            $name = $io->ask('Application exists, specify other name(or type exit): ');
         }
         $config->set('applications/' . $name, $name);
         $config->save();

@@ -1,20 +1,44 @@
-cmsApp.controller('UsersController', function($scope, $http, ngTableParams, localStorageService) {
+cmsApp.controller('UsersController', function ($scope, $http, $state, ApiService, ngTableParams) {
 
-    $scope.tableParams = new ngTableParams({
-        page: 1,            // show first page
-        count: 20,          // count per page
-        sorting: {
-            name: 'asc'     // initial sorting
-        }
-    }, {
-        total: 0,           // length of data
-        getData: function($defer, params) {
-            // ajax request to api
-            $http.get('/admin/users/').success(function(response) {
-                params.total(3);
-                $defer.resolve(response.data);
-            });
-        }
+
+    ApiService.getModuleConfig('users', function (data) {
+        $scope.moduleConfig = data;
+
+        $scope.tableParams = new ngTableParams({
+            page: 1,
+            count: 10,
+            sorting: {
+                name: 'asc'
+            }
+        }, {
+            total: 0,
+            getData: function ($defer, params) {
+                $http.post('/admin/users/list/', params.$params)
+                    .success(function (response) {
+                        params.total(response.data.paging.total);
+                        params.pagesCountOptions = [10, 25, 50];
+
+                        params.currentCount = response.data.paging.count;
+                        params.currentPage = response.data.paging.page;
+                        params.currentResultsCount = response.data.objects.length || 0;
+
+                        params.sorting(response.data.sorting);
+                        $defer.resolve(response.data.objects);
+                    });
+            }
+        });
+
     });
+
+    $scope.sortTableBy = function (columnName) {
+        var sortingConfig = {};
+        sortingConfig[columnName] = $scope.tableParams.isSortBy(columnName, 'asc') ? 'desc' : 'asc';
+
+        $scope.tableParams.sorting(sortingConfig);
+    };
+
+    $scope.addNew = function() {
+        $state.go('users.edit', {id:2});
+    }
 
 });

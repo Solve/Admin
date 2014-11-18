@@ -39,12 +39,32 @@ class TableViewController extends ApiController {
         $this->setData($data->getArray(), 'objects');
     }
 
+    public function infoAction() {
+        $modelName = $this->_moduleConfig['model'];
+        $qc = new QC();
+        if ($id = $this->request->getVar('id')) {
+            $qc->and(array('id' => $id));
+        }
+        /**
+         * @var Model $object
+         */
+        $object = call_user_func(array($modelName, 'loadOne'), $qc);
+
+        $this->setData($object->getArray(), 'object');
+    }
+
     public function saveAction() {
+        $modelName = $this->_moduleConfig['model'];
         if ($data = $this->request->getVar('data')) {
             /**
              * @var Model $object
              */
             $object = new $this->_moduleConfig['model'];
+
+            if (!empty($data['id'])) {
+                $object = call_user_func(array($modelName, 'loadOne'), QC::create()->and(array('id' => $data['id'])));
+                unset($data['id']);
+            }
             $object->mergeWithData($data);
             if ($object->save()) {
                 $this->setData($object->getArray(), 'object');

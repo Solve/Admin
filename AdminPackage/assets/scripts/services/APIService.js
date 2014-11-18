@@ -76,30 +76,53 @@ angular.module("cmsApp").factory("ApiService",
             logout: logout,
 
 
-            getModuleConfig: function(moduleName, callback) {
+            getModuleConfig: function (moduleName, callback) {
                 if (_moduleConfigs[moduleName]) {
                     callback(_moduleConfigs[moduleName]);
                     return true;
                 }
-                $http({
-                    method: "POST",
-                    url: API_ENDPOINT + moduleName + "/get-config/"
-                }).success(function (response) {
-                    _moduleConfigs[moduleName] = response.data;
-                    if (callback) callback(response);
-                }).error(function (response) {
-                    if (callback) callback(response);
-                });
+                $http.post(API_ENDPOINT + moduleName + "/get-config/")
+                    .success(function (response) {
+                        _moduleConfigs[moduleName] = response.data;
+                        callback(_moduleConfigs[moduleName]);
+                    }).error(function (response) {
+                        callback(response);
+                    });
             },
 
-            saveObject: function(moduleName, data, callback) {
+            getObjectsList: function (moduleName, params, callback) {
+                $http.post('/admin/' + moduleName + '/list/', params.$params)
+                    .success(function (response) {
+                        params.total(response.data.paging.total);
+                        params.pagesCountOptions = [10, 25, 50];
+
+                        params.currentCount = response.data.paging.count;
+                        params.currentPage = response.data.paging.page;
+                        params.currentResultsCount = response.data.objects.length || 0;
+
+                        params.sorting(response.data.sorting);
+                        callback(response.data.objects);
+                    }).error(function () {
+                        callback(response);
+                    });
+
+            },
+
+            getObject: function (moduleName, params, callback) {
+                $http.post('/admin/' + moduleName + '/info/', params)
+                    .success(function (response) {
+                        callback(response.data.object);
+                    });
+            },
+
+            saveObject: function (moduleName, data, callback) {
                 $http({
                     method: "POST",
                     url: API_ENDPOINT + moduleName + "/save/",
                     data: {
                         data: data
                     }
-                }).success(function(response) {
+                }).success(function (response) {
                     callback(response);
                 });
             }

@@ -1,4 +1,6 @@
 AdminPackage/assets/node_modules/
+app/Admin
+web/admin
 .idea/
 vendor/
 composer.lock

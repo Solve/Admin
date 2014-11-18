@@ -13,18 +13,18 @@ var cmsApp = angular.module('cmsApp', ['LocalStorageModule', 'ui.router', 'ui.bo
             url: "/dashboard",
             templateUrl: "admin/views/dashboard.html",
             controller: "DashboardController"
-        }).state("users", {
+        }).state("objects", {
             template: '<ui-view/>'
-        }).state("users.list", {
-            url: "/users",
+        }).state("objects.list", {
+            url: "/:module",
             templateUrl: "admin/views/list/table.html",
-            controller: "UsersController"
-        }).state("users.edit", {
-            url: "/users/:id/",
+            controller: "ObjectsController"
+        }).state("objects.edit", {
+            url: "/:module/:id/",
             templateUrl: "admin/views/list/form.html",
             controller: "ObjectsInfoController"
-        }).state("users.add", {
-            url: "/users/add",
+        }).state("objects.add", {
+            url: "/:module/add",
             templateUrl: "admin/views/list/form.html",
             controller: "ObjectsInfoController"
         });

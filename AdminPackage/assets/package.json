@@ -7,6 +7,7 @@
     "angular-bootstrap": "*",
     "angular-local-storage": "*",
     "angular-ui-router": "*",
-    "ng-table": "*"
+    "ng-table": "*",
+    "angular-animate": "*"
   }
 }

@@ -1,4 +1,4 @@
-cmsApp.controller('ObjectsInfoController', function ($scope, $state, $stateParams, ApiService, ngTableParams) {
+cmsApp.controller('ObjectsInfoController', function ($scope, $state, $stateParams, ApiService, $cacheFactory, ngTableParams) {
 
     $scope._moduleName = $stateParams.module;
     var cache = $cacheFactory.get('module_cache_' + $scope._moduleName) || $cacheFactory('module_cache_' + $scope._moduleName);

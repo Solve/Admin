@@ -20,11 +20,10 @@ class Installer {
     public static function onPostPackageInstall(CommandEvent $event) {
         $projectRoot = realpath(__DIR__ . '/../../../..') . '/';
         $packageRoot = __DIR__ . '/';
+        $appRoot = $projectRoot . 'app/Admin/';
 
         $io = $event->getIO();
-        if (!$io->askConfirmation('Would you like to install admin panel? (Y/n) ', true)) {
-            return false;
-        } else {
+        if ($io->askConfirmation('Would you like to install admin panel? (Y/n) ', true)) {
             if (!is_dir($projectRoot . 'app')) {
                 die('Solve project is not found in ' . $projectRoot . ', exiting...');
             }
@@ -42,7 +41,7 @@ class Installer {
             $config->save();
         }
 
-        if (!$io->askConfirmation('Would you like to update assets? (Y/n) ', true)) {
+        if ($io->askConfirmation('Would you like to update assets? (Y/n) ', true)) {
             FSService::makeWritable($appRoot);
             FSService::makeWritable($projectRoot . 'web/admin/');
             FSService::copyRecursive($packageRoot . 'app/', $appRoot);

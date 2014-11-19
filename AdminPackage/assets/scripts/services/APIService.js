@@ -111,11 +111,11 @@ angular.module("cmsApp").factory("ApiService", function ($http, $rootScope, $fil
                 return q.promise;
             },
 
-            saveObject: function (moduleName, data, callback) {
+            saveObject: function (moduleName, data) {
                 var q = $q.defer();
                 $http.post(API_ENDPOINT + moduleName + "/save/", {data: data})
                     .success(function (response) {
-                        q.resolve(response.data.object);
+                        q.resolve(response);
                     }).error(function (r) {
                         q.reject(r);
                     });

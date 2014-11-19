@@ -1,5 +1,4 @@
-angular.module("cmsApp").factory("ApiService",
-    function ($http, $rootScope, $filter, localStorageService) {
+angular.module("cmsApp").factory("ApiService", function ($http, $rootScope, $filter, $q, localStorageService) {
 
         var _sessionToken = localStorageService.get("sessionToken") || undefined;
         var _isLoggedIn = localStorageService.get("isLoggedIn");
@@ -55,18 +54,16 @@ angular.module("cmsApp").factory("ApiService",
         }
 
         function logout(callback) {
-            $http({
-                method: "POST",
-                url: API_ENDPOINT + "logout/"
-            }).success(function (response) {
-                localStorageService.remove('user');
-                localStorageService.set('isLoggedIn', false);
-                _isLoggedIn = false;
+            $http.post(API_ENDPOINT + "logout/")
+                .success(function (response) {
+                    localStorageService.remove('user');
+                    localStorageService.set('isLoggedIn', false);
+                    _isLoggedIn = false;
 
-                if (callback) callback(response);
-            }).error(function (response) {
-                if (callback) callback(response);
-            });
+                    if (callback) callback(response);
+                }).error(function (response) {
+                    if (callback) callback(response);
+                });
         }
 
         return {
@@ -76,55 +73,53 @@ angular.module("cmsApp").factory("ApiService",
             logout: logout,
 
 
-            getModuleConfig: function (moduleName, callback) {
+            getModuleConfig: function (moduleName) {
+                var q = $q.defer();
                 if (_moduleConfigs[moduleName]) {
-                    callback(_moduleConfigs[moduleName]);
-                    return true;
+                    q.resolve(_moduleConfigs[moduleName]);
+                    return q.promise;
                 }
                 $http.post(API_ENDPOINT + moduleName + "/get-config/")
-                    .success(function (response) {
-                        _moduleConfigs[moduleName] = response.data;
-                        callback(_moduleConfigs[moduleName]);
-                    }).error(function (response) {
-                        callback(response);
+                    .success(function (r) {
+                        _moduleConfigs[moduleName] = r.data;
+                        q.resolve(_moduleConfigs[moduleName]);
+                    }).error(function (r) {
+                        q.reject(r);
                     });
+                return q.promise;
             },
 
-            getObjectsList: function (moduleName, params, callback) {
-                $http.post('/admin/' + moduleName + '/list/', params.$params)
+            getObjectsList: function (moduleName, params) {
+                var q = $q.defer();
+                $http.post('/admin/' + moduleName + '/list/', params)
                     .success(function (response) {
-                        params.total(response.data.paging.total);
-                        params.pagesCountOptions = [10, 25, 50];
-
-                        params.currentCount = response.data.paging.count;
-                        params.currentPage = response.data.paging.page;
-                        params.currentResultsCount = response.data.objects.length || 0;
-
-                        params.sorting(response.data.sorting);
-                        callback(response.data.objects);
-                    }).error(function () {
-                        callback(response);
+                        q.resolve(response.data);
+                    }).error(function (r) {
+                        q.reject(r);
                     });
-
+                return q.promise;
             },
 
-            getObject: function (moduleName, params, callback) {
+            getObject: function (moduleName, params) {
+                var q = $q.defer();
                 $http.post('/admin/' + moduleName + '/info/', params)
                     .success(function (response) {
-                        callback(response.data.object);
+                        q.resolve(response.data.object);
+                    }).error(function (r) {
+                        q.reject(r);
                     });
+                return q.promise;
             },
 
             saveObject: function (moduleName, data, callback) {
-                $http({
-                    method: "POST",
-                    url: API_ENDPOINT + moduleName + "/save/",
-                    data: {
-                        data: data
-                    }
-                }).success(function (response) {
-                    callback(response);
-                });
+                var q = $q.defer();
+                $http.post(API_ENDPOINT + moduleName + "/save/", {data: data})
+                    .success(function (response) {
+                        q.resolve(response.data.object);
+                    }).error(function (r) {
+                        q.reject(r);
+                    });
+                return q.promise;
             }
         }
     }

@@ -18,35 +18,46 @@ use Solve\Utils\FSService;
 class Installer {
 
     public static function onPostPackageInstall(CommandEvent $event) {
+        $projectRoot = realpath(__DIR__ . '/../../../..') . '/';
+        $packageRoot = __DIR__ . '/';
+
         $io = $event->getIO();
         if (!$io->askConfirmation('Would you like to install admin panel? (Y/n) ', true)) {
             return false;
+        } else {
+            if (!is_dir($projectRoot . 'app')) {
+                die('Solve project is not found in ' . $projectRoot . ', exiting...');
+            }
+
+            $name    = $io->ask('Enter the app name (admin): ', 'admin');
+            $kernel  = Kernel::getMainInstance();
+            $appRoot = $projectRoot . 'app/' . ucfirst($name) . '/';
+            $kernel->getEnvironment()->setProjectRoot($projectRoot);
+
+            $config = DC::getProjectConfig();
+            while ($name && $config->get('applications/' . $name)) {
+                $name = $io->ask('Application exists, specify other name(or type exit): ');
+            }
+            $config->set('applications/' . $name, $name);
+            $config->save();
         }
 
-        $projectRoot = realpath(__DIR__ . '/../../../..') . '/';
-        $packageRoot = __DIR__ . '/';
-        if (!is_dir($projectRoot . 'app')) {
-            die('Solve project is not found in ' . $projectRoot . ', exiting...');
+        if (!$io->askConfirmation('Would you like to update assets? (Y/n) ', true)) {
+            FSService::makeWritable($appRoot);
+            FSService::makeWritable($projectRoot . 'web/admin/');
+            FSService::copyRecursive($packageRoot . 'app/', $appRoot);
+            FSService::copyRecursive($packageRoot . 'assets/', $projectRoot . 'web/admin/');
+            exec('cd '.$projectRoot.'web/admin/ && npm install');
         }
 
-        $name    = $io->ask('Enter the app name (admin): ', 'admin');
-        $kernel  = Kernel::getMainInstance();
-        $appRoot = $projectRoot . 'app/' . ucfirst($name) . '/';
-        $kernel->getEnvironment()->setProjectRoot($projectRoot);
+    }
 
-        $config = DC::getProjectConfig();
-        while ($name && $config->get('applications/' . $name)) {
-            $name = $io->ask('Application exists, specify other name(or type exit): ');
+    public static function deployAssets(CommandEvent $event) {
+        $io = $event->getIO();
+        if (!$io->askConfirmation('Would you like to update assets? (Y/n) ', true)) {
+            return false;
         }
-        $config->set('applications/' . $name, $name);
-        $config->save();
 
-
-        FSService::makeWritable($appRoot);
-        FSService::makeWritable($projectRoot . 'web/admin/');
-        FSService::copyRecursive($packageRoot . 'app/', $appRoot);
-        FSService::copyRecursive($packageRoot . 'assets/', $projectRoot . 'web/admin/');
-        exec('cd '.$projectRoot.'web/admin/ && npm install');
     }
 
 }

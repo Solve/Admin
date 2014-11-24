@@ -3,11 +3,15 @@ angular.module("cmsApp").factory("ApiService", function ($http, $rootScope, $fil
         var _sessionToken = localStorageService.get("sessionToken") || undefined;
         var _isLoggedIn = localStorageService.get("isLoggedIn");
 
+        //console.log('_isLoggedIn:', _isLoggedIn, window.localStorage.getItem('isLoggedIn'), localStorageService.get('isLoggedIn'));
+
         if (_isLoggedIn == null || _isLoggedIn == "false") {
             _isLoggedIn = false;
         } else {
             _isLoggedIn = true;
         }
+        //console.log('_isLoggedIn after if:', _isLoggedIn);
+        //asdf;
         var _moduleConfigs = {};
 
 
@@ -75,6 +79,7 @@ angular.module("cmsApp").factory("ApiService", function ($http, $rootScope, $fil
 
             getModuleConfig: function (moduleName) {
                 var q = $q.defer();
+
                 if (_moduleConfigs[moduleName]) {
                     q.resolve(_moduleConfigs[moduleName]);
                     return q.promise;
@@ -86,17 +91,20 @@ angular.module("cmsApp").factory("ApiService", function ($http, $rootScope, $fil
                     }).error(function (r) {
                         q.reject(r);
                     });
+
                 return q.promise;
             },
 
             getObjectsList: function (moduleName, params) {
                 var q = $q.defer();
+
                 $http.post('/admin/' + moduleName + '/list/', params)
                     .success(function (response) {
                         q.resolve(response.data);
                     }).error(function (r) {
                         q.reject(r);
                     });
+
                 return q.promise;
             },
 
@@ -120,6 +128,18 @@ angular.module("cmsApp").factory("ApiService", function ($http, $rootScope, $fil
                         q.reject(r);
                     });
                 return q.promise;
+            },
+
+            deleteObjectsByIds: function(moduleName, ids) {
+                var q = $q.defer();
+                $http.post(API_ENDPOINT + moduleName + "/delete/", {data: {ids: ids}})
+                    .success(function (response) {
+                        q.resolve(response);
+                    }).error(function (r) {
+                        q.reject(r);
+                    });
+                return q.promise;
+
             }
         }
     }

@@ -2,6 +2,7 @@ cmsApp.controller('ObjectsController', function ($scope, $http, $state, $statePa
 
     $scope._moduleName = $stateParams.module;
     var cache = $cacheFactory.get('module_cache_' + $scope._moduleName) || $cacheFactory('module_cache_' + $scope._moduleName);
+    $scope.selectedRowsIds = [];
 
     ApiService.getModuleConfig($scope._moduleName)
         .then(function (config) {
@@ -17,6 +18,7 @@ cmsApp.controller('ObjectsController', function ($scope, $http, $state, $statePa
                         paramsObject.currentPage = data.paging.page;
                         paramsObject.currentResultsCount = data.objects.length || 0;
                         if (data.sorting) paramsObject.sorting(data.sorting);
+                        $scope.selectedRowsIds = [];
 
                         cache.put('params', {
                             page: data.paging.page,
@@ -37,19 +39,38 @@ cmsApp.controller('ObjectsController', function ($scope, $http, $state, $statePa
         $scope.tableParams.sorting(sortingConfig);
     };
 
-    $scope.addNew = function() {
+    $scope.changeSelection = function(object) {
+        if (object.$selected) {
+            $scope.selectedRowsIds.push(object.id);
+        } else {
+            var index = $scope.selectedRowsIds.indexOf(object.id);
+            if (index > -1) {
+                $scope.selectedRowsIds.splice(index, 1);
+            }
+        }
+    };
+
+    $scope.addObject = function() {
         $state.go('objects.add', {module: $scope._moduleName});
     };
 
+    $scope.deleteObjects = function() {
+        if (confirm('Are you sure (' + $scope.selectedRowsIds.join(',') + ')?')) {
+            ApiService.deleteObjectsByIds($scope._moduleName, $scope.selectedRowsIds)
+                .then(function(response) {
+                    $scope.tableParams.reload();
+                });
+        }
+    };
+
     function getTableSettings() {
-        var config = cache.get('params') || {
+        return cache.get('params') || {
                 page: 1,
                 count: 10,
                 sorting: {
                     name: 'asc'
                 }
-            };
-        return config;
+            }
     }
 
 });

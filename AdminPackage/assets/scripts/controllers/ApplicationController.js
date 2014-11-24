@@ -16,6 +16,7 @@ cmsApp.controller('ApplicationController', function($scope, $state, ApiService, 
     };
 
     $scope.$on('USER_LOGGED_IN', function() {
+        console.log('is user logged in');
         $scope.isFullScreen = false;
     });
 

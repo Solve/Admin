@@ -1,4 +1,4 @@
-cmsApp.controller('ObjectsInfoController', function ($scope, $state, $stateParams, ApiService, $cacheFactory, ngTableParams) {
+cmsApp.controller('ObjectsInfoController', function ($scope, $state, $stateParams, ApiService, $cacheFactory) {
 
     $scope._moduleName = $stateParams.module;
     var cache = $cacheFactory.get('module_cache_' + $scope._moduleName) || $cacheFactory('module_cache_' + $scope._moduleName);
@@ -20,6 +20,6 @@ cmsApp.controller('ObjectsInfoController', function ($scope, $state, $stateParam
                 $state.go('objects.list', {module: $scope._moduleName});
             }
         });
-    }
+    };
 
 });

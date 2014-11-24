@@ -8,9 +8,14 @@ users:
     name:
       title: Name
       type: text
+      help: Enter correct name
     status:
       title: Status
       type: label
     progress:
       title: Progress
-      type: progressbar
+      type: text
+      display: progressbar
+    avatar:
+      title: User's avatar
+      type: file

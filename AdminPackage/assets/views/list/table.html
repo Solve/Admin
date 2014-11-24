@@ -1,12 +1,12 @@
 <div class="page page-table">
-
     <div class="panel table-dynamic">
         <div class="panel-heading" style="margin-bottom: 20px;">
             <span style="text-transform: none;font-weight: 100;">
                 <span style="font-size: 32px;">Users</span> ({{ tableParams.currentResultsCount }} of {{ tableParams.total() }} total)
             </span>
 
-            <button style="margin-top:5px;" ng-click="addNew()" class="btn btn-w-md btn-gap-v btn-round btn-default pull-right"><i class="glyphicon glyphicon-plus"></i>&nbsp;New </button>
+            <button style="margin-top:5px;margin-left: 5px;" ng-if="selectedRowsIds.length" ng-click="deleteObjects()" class="btn btn-w-md btn-gap-v btn-round btn-danger pull-right"><i class="glyphicon glyphicon-trash"></i>&nbsp;Delete </button>
+            <button style="margin-top:5px;" ng-click="addObject()" class="btn btn-w-md btn-gap-v btn-round btn-default pull-right"><i class="glyphicon glyphicon-plus"></i>&nbsp;New </button>
         </div>
 
         <div class="row" ng-hide="true">
@@ -20,23 +20,32 @@
                         >
             </div>
         </div>
-        <table class="table table-hover" ng-table="tableParams" template-pagination="custom/pager">
+        <table class="table table-hover ng-table-rowselected" ng-table="tableParams" template-pagination="custom/pager">
             <tr style="background: rgb(245,245,245);">
-                <th ng-repeat="(columnName, columnInfo) in moduleConfig.columns"
-                    ng-click="sortTableBy(columnName)"
+                <th ng-repeat="columnInfo in moduleConfig.columns"
+                    ng-click="sortTableBy(columnInfo.name)"
                     style="cursor: pointer;"
                         >
                 <span>{{ columnInfo.title }}&nbsp;</span><i ng-class="{
-                'ti-angle-down': tableParams.isSortBy(columnName, 'desc'),
-                'ti-angle-up': tableParams.isSortBy(columnName, 'asc')
+                'ti-angle-down': tableParams.isSortBy(columnInfo.name, 'desc'),
+                'ti-angle-up': tableParams.isSortBy(columnInfo.name, 'asc')
                 }"></i></th>
                 <th>Actions</th>
             </tr>
-            <tr ng-repeat="object in $data">
-                <td ng-repeat="(columnName, columnInfo) in moduleConfig.columns">
-                    <progressbar ng-if="columnInfo.type == 'progressbar'" class="progressbar-xs no-margin" value="object[columnName]"></progressbar>
-                    <span ng-if="columnInfo.type == 'label'" class="label label-{{ object[columnName] }}">{{ object[columnName] }}</span>
-                    <span ng-if="columnInfo.type == 'text'">{{ object[columnName] }}</span>
+            <tr ng-repeat="object in $data"
+                ng-click="object.$selected = !object.$selected; changeSelection(object)"
+                ng-class="{'info': object.$selected}"
+                >
+                <td ng-repeat="columnInfo in moduleConfig.columns">
+                    <progressbar ng-if="columnInfo.display == 'progressbar'" class="progressbar-xs no-margin" value="object[columnInfo.name]"></progressbar>
+                    <span ng-if="columnInfo.display == 'label'" class="label label-default">{{ object[columnInfo.name] }}</span>
+                    <span ng-if="columnInfo.display == 'text'">{{ object[columnInfo.name] }}</span>
+                    <span ng-if="columnInfo.display == 'file'">
+                        <img ng-src="{{object[columnInfo.name].link}}" ng-if="object[columnInfo.name].link" style="width:100px;max-height:100px;"/>
+                        <span class="label label-default" ng-if="!object[columnInfo.name].link">
+                            file's not uploaded
+                        </span>
+                    </span>
                 </td>
                 <td>
                     <a ui-sref="objects.edit({module: _moduleName,id: object.id})" class="btn btn-default">edit</a>

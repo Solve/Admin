@@ -23,8 +23,9 @@ use Solve\View\RenderEngine\SlotRenderEngine;
 class ApplicationController extends BaseController {
 
     public function _preAction() {
-        if (!$this->request->isXHR() && !in_array($this->route->getName(), array('init', 'index', 'login', 'logout'))) {
-            $this->redirectToUri('/');
+        if (!$this->request->isXHR() && !in_array($this->route->getName(), array('init', 'index', 'login', 'logout', 'tmpFile'))
+        ) {
+//            $this->redirectToUri('/');
         }
         $moduleName = Inflector::underscore(substr($this->route->getControllerName(), 0, -10));
         if (AdminService::getStructure()->has($moduleName)) {

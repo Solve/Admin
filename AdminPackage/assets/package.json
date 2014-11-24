@@ -4,10 +4,11 @@
   "description": "",
   "dependencies": {
     "angular": "*",
+    "angular-animate": "*",
     "angular-bootstrap": "*",
+    "angular-file-upload": "^1.6.4",
     "angular-local-storage": "*",
     "angular-ui-router": "*",
-    "ng-table": "*",
-    "angular-animate": "*"
+    "ng-table": "*"
   }
 }

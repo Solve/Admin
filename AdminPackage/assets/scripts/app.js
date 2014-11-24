@@ -1,4 +1,4 @@
-var cmsApp = angular.module('cmsApp', ['LocalStorageModule', 'ui.router', 'ui.bootstrap', 'ngTable', 'ngAnimate'])
+var cmsApp = angular.module('cmsApp', ['LocalStorageModule', 'ui.router', 'ui.bootstrap', 'ngTable', 'ngAnimate', 'angularFileUpload'])
     .config(function ($httpProvider, localStorageServiceProvider, $stateProvider, $urlRouterProvider) {
 
         $httpProvider.interceptors.push("APIInterceptor");
@@ -29,7 +29,6 @@ var cmsApp = angular.module('cmsApp', ['LocalStorageModule', 'ui.router', 'ui.bo
             controller: "ObjectsInfoController"
         });
         $urlRouterProvider.otherwise(function($injector, $location) {
-            console.log('otherwise', $injector.get('ApiService').isLoggedIn());
             if ($injector.get('ApiService').isLoggedIn()) {
                 $location.path('/dashboard');
             } else {
